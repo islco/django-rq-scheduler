@@ -14,16 +14,13 @@ from model_utils import Choices
 from model_utils.models import TimeStampedModel
 
 
-QUEUES = [(key, key) for key in settings.RQ_QUEUES.keys()]
-
-
 @python_2_unicode_compatible
 class BaseJob(TimeStampedModel):
 
     name = models.CharField(_('name'), max_length=128, unique=True)
     callable = models.CharField(_('callable'), max_length=2048)
     enabled = models.BooleanField(_('enabled'), default=True)
-    queue = models.CharField(_('queue'), max_length=16, choices=QUEUES)
+    queue = models.CharField(_('queue'), max_length=16)
     job_id = models.CharField(
         _('job id'), max_length=128, editable=False, blank=True, null=True)
     scheduled_time = models.DateTimeField(_('scheduled time'))
@@ -49,6 +46,7 @@ class BaseJob(TimeStampedModel):
 
     def clean(self):
         self.clean_callable()
+        self.clean_queue()
 
     def clean_callable(self):
         try:
@@ -57,6 +55,15 @@ class BaseJob(TimeStampedModel):
             raise ValidationError({
                 'callable': ValidationError(
                     _('Invalid callable, must be importable'), code='invalid')
+            })
+
+    def clean_queue(self):
+        queue_keys = settings.RQ_QUEUES.keys()
+        if self.queue not in queue_keys:
+            raise ValidationError({
+                'queue': ValidationError(
+                    _('Invalid queue, must be one of: {}'.format(
+                        ', '.join(queue_keys))), code='invalid')
             })
 
     def is_scheduled(self):
