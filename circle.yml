@@ -8,6 +8,8 @@ machine:
     DB_NAME: circle_ci
     DB_USER: ubuntu
 dependencies:
+  pre:
+    - pip install wheel
   post:
     - pip install -e .[test]
 test:
