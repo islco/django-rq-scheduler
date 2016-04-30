@@ -1,0 +1,15 @@
+machine:
+  python:
+    version: 2.7.9
+  services:
+    - postgresql
+    - redis
+  environment:
+    DB_NAME: circle_ci
+    DB_USER: ubuntu
+dependencies:
+  post:
+    - pip install -e .[test]
+test:
+  override:
+    - ./testproject19/manage.py test
