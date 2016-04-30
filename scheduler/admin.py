@@ -22,6 +22,7 @@ class ScheduledJobAdmin(admin.ModelAdmin):
         (_('Scheduling'), {
             'fields': (
                 'scheduled_time',
+                'timeout',
             ),
         }),
     )
@@ -48,6 +49,7 @@ class RepeatableJobAdmin(admin.ModelAdmin):
                 'scheduled_time',
                 ('interval', 'interval_unit', ),
                 'repeat',
+                'timeout',
             ),
         }),
     )

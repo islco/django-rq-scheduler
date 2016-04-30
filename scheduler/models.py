@@ -27,6 +27,14 @@ class BaseJob(TimeStampedModel):
     job_id = models.CharField(
         _('job id'), max_length=128, editable=False, blank=True, null=True)
     scheduled_time = models.DateTimeField(_('scheduled time'))
+    timeout = models.IntegerField(
+        _('timeout'), blank=True, null=True,
+        help_text=_(
+            'Timeout specifies the maximum runtime, in seconds, for the job '
+            'before it\'ll be considered \'lost\'. Blank uses the default '
+            'timeout.'
+        )
+    )
 
     def __str__(self):
         return self.name
@@ -73,8 +81,12 @@ class BaseJob(TimeStampedModel):
     def schedule(self):
         if self.is_schedulable() is False:
             return False
+        kwargs = {}
+        if self.timeout:
+            kwargs['timeout'] = self.timeout
         job = self.scheduler().enqueue_at(
-            self.schedule_time_utc(), self.callable_func()
+            self.schedule_time_utc(), self.callable_func(),
+            **kwargs
         )
         self.job_id = job.id
         return True
@@ -127,12 +139,15 @@ class RepeatableJob(BaseJob):
     def schedule(self):
         if self.is_schedulable() is False:
             return False
-        job = self.scheduler().schedule(
-            scheduled_time=self.schedule_time_utc(),
-            func=self.callable_func(),
-            interval=self.interval_seconds(),
-            repeat=self.repeat
-        )
+        kwargs = {
+            'scheduled_time': self.schedule_time_utc(),
+            'func': self.callable_func(),
+            'interval': self.interval_seconds(),
+            'repeat': self.repeat
+        }
+        if self.timeout:
+            kwargs['timeout'] = self.timeout
+        job = self.scheduler().schedule(**kwargs)
         self.job_id = job.id
         return True
 
