@@ -139,10 +139,11 @@ class TestScheduledJob(TestCase):
 
     def test_schedule_time_utc(self):
         job = self.JobClass()
-        now = datetime.now()
+        est = pytz.timezone('US/Eastern')
+        scheduled_time = datetime(2016, 12, 25, 8, 0, 0, tzinfo=est)
+        job.scheduled_time = scheduled_time
         utc = pytz.timezone('UTC')
-        job.scheduled_time = now
-        expected = utc.localize(now).isoformat()
+        expected = scheduled_time.astimezone(utc).isoformat()
         self.assertEqual(expected, job.schedule_time_utc().isoformat())
 
     def test_save_enabled(self):
