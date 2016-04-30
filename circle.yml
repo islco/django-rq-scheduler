@@ -8,9 +8,7 @@ machine:
     DB_NAME: circle_ci
     DB_USER: ubuntu
 dependencies:
-  pre:
-    - pip install wheel
-  post:
+  override:
     - pip install -e .[test]
 test:
   override:
