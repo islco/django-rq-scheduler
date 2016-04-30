@@ -9,6 +9,7 @@ machine:
     DB_USER: ubuntu
 dependencies:
   override:
+    - pip install -U pip setuptools
     - pip install -e .[test]
 test:
   override:
