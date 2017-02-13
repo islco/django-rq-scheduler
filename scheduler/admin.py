@@ -7,9 +7,6 @@ from django.utils.translation import ugettext_lazy as _
 from scheduler.models import RepeatableJob, ScheduledJob
 
 
-QUEUES = [(key, key) for key in settings.RQ_QUEUES.keys()]
-
-
 class QueueMixin(object):
     actions = ['delete_model']
 
