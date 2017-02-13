@@ -11,11 +11,20 @@ QUEUES = [(key, key) for key in settings.RQ_QUEUES.keys()]
 
 
 class QueueMixin(object):
+    actions = ['delete_model']
 
     def get_form(self, request, obj=None, **kwargs):
-        queue_field = self.model._meta.get_field('queue')
-        queue_field.choices = QUEUES
         return super(QueueMixin, self).get_form(request, obj, **kwargs)
+
+    def get_actions(self, request):
+        actions = super(QueueMixin, self).get_actions(request)
+        del actions['delete_selected']
+        return actions
+
+    def delete_model(self, request, obj):
+        for o in obj.all():
+            o.delete()
+    delete_model.short_description = _("Delete selected %(verbose_name_plural)s")
 
 
 @admin.register(ScheduledJob)
