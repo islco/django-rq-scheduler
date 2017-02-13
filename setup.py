@@ -43,7 +43,7 @@ setup(
     url='https://github.com/istrategylabs/django-rq-scheduler',
     zip_safe=True,
     install_requires=[
-        'django>=1.9.0',
+        'django>=1.8.0',
         'django-model-utils>=2.4.0',
         'django-rq>=0.9.0',
         'rq_scheduler>=0.5.1',
