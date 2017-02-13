@@ -1,7 +1,10 @@
 from __future__ import unicode_literals
 
 from django.apps import AppConfig
-from django.db.models.functions import Now
+try:
+    from django.db.models.functions import Now
+except ImportError:
+    from django.utils.timezone import now as Now
 from django.utils.translation import ugettext_lazy as _
 
 
