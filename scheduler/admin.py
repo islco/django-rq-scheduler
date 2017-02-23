@@ -19,8 +19,11 @@ class QueueMixin(object):
         return actions
 
     def delete_model(self, request, obj):
-        for o in obj.all():
-            o.delete()
+        if hasattr(obj, 'all'):
+            for o in obj.all():
+                o.delete()
+        else:
+            obj.delete()
     delete_model.short_description = _("Delete selected %(verbose_name_plural)s")
 
 
