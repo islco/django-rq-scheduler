@@ -182,6 +182,27 @@ class TestScheduledJob(TestCase):
         job.save()
         self.assertIsNone(job.job_id)
 
+    def test_save_and_schedule(self):
+        job = self.JobClassFactory()
+        job.id = 1
+        job.save()
+        is_scheduled = job.is_scheduled()
+        self.assertIsNotNone(job.job_id)
+        self.assertTrue(is_scheduled)
+
+    def test_delete_and_unschedule(self):
+        job_id = 1
+        job = self.JobClassFactory()
+        job.id = job_id
+        job.save()
+        is_scheduled = job.is_scheduled()
+        self.assertIsNotNone(job.job_id)
+        self.assertTrue(is_scheduled)
+        scheduler = job.scheduler()
+        job.delete()
+        is_scheduled = job_id in scheduler
+        self.assertFalse(is_scheduled)
+
 
 class TestRepeatableJob(TestScheduledJob):
 
