@@ -5,6 +5,7 @@ from django.contrib import admin
 from django.utils.translation import ugettext_lazy as _
 
 from scheduler.models import RepeatableJob, ScheduledJob
+from scheduler.forms import RepeatableJobAdminForm
 
 
 class QueueMixin(object):
@@ -50,6 +51,7 @@ class ScheduledJobAdmin(QueueMixin, admin.ModelAdmin):
 
 @admin.register(RepeatableJob)
 class RepeatableJobAdmin(QueueMixin, admin.ModelAdmin):
+    form = RepeatableJobAdminForm
     list_display = (
         'name', 'job_id', 'is_scheduled', 'scheduled_time', 'interval_display',
         'enabled')
@@ -71,5 +73,6 @@ class RepeatableJobAdmin(QueueMixin, admin.ModelAdmin):
                 'repeat',
                 'timeout',
             ),
+            'description': "Please be aware: Scheduled Time has to be in the future.",
         }),
     )
