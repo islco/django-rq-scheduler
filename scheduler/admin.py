@@ -1,14 +1,14 @@
 from __future__ import unicode_literals
 
-from django.conf import settings
 from django.contrib import admin
 from django.utils.translation import ugettext_lazy as _
 
 from scheduler.models import RepeatableJob, ScheduledJob
-from scheduler.forms import RepeatableJobAdminForm
+from scheduler.forms import JobAdminForm
 
 
 class QueueMixin(object):
+    form = JobAdminForm
     actions = ['delete_model']
 
     def get_actions(self, request):
@@ -45,13 +45,13 @@ class ScheduledJobAdmin(QueueMixin, admin.ModelAdmin):
                 'scheduled_time',
                 'timeout',
             ),
+            'description': _('Please be aware: Scheduled Time has to be in the future.'),
         }),
     )
 
 
 @admin.register(RepeatableJob)
 class RepeatableJobAdmin(QueueMixin, admin.ModelAdmin):
-    form = RepeatableJobAdminForm
     list_display = (
         'name', 'job_id', 'is_scheduled', 'scheduled_time', 'interval_display',
         'enabled')
@@ -73,6 +73,6 @@ class RepeatableJobAdmin(QueueMixin, admin.ModelAdmin):
                 'repeat',
                 'timeout',
             ),
-            'description': "Please be aware: Scheduled Time has to be in the future.",
+            'description': _('Please be aware: Scheduled Time has to be in the future.'),
         }),
     )

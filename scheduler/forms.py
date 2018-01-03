@@ -2,7 +2,7 @@ from django import forms
 from django.utils import timezone
 
 
-class RepeatableJobAdminForm(forms.ModelForm):
+class JobAdminForm(forms.ModelForm):
 
     def clean_scheduled_time(self):
         data = self.cleaned_data['scheduled_time']
