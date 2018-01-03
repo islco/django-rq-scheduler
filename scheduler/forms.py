@@ -1,11 +1,11 @@
-from django import forms
-from django.utils import timezone
+from django.forms import ModelForm, ValidationError
+from django.utils.timezone import now
 
 
-class JobAdminForm(forms.ModelForm):
+class JobAdminForm(ModelForm):
 
     def clean_scheduled_time(self):
         data = self.cleaned_data['scheduled_time']
-        if data < timezone.now():
-            raise forms.ValidationError("Scheduled time has to be in the future")
+        if data < now():
+            raise ValidationError("Scheduled time has to be in the future")
         return data
