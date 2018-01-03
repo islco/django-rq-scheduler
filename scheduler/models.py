@@ -14,13 +14,16 @@ from model_utils import Choices
 from model_utils.models import TimeStampedModel
 
 
+QUEUES = [(key, key) for key in settings.RQ_QUEUES.keys()]
+
+
 @python_2_unicode_compatible
 class BaseJob(TimeStampedModel):
 
     name = models.CharField(_('name'), max_length=128, unique=True)
     callable = models.CharField(_('callable'), max_length=2048)
     enabled = models.BooleanField(_('enabled'), default=True)
-    queue = models.CharField(_('queue'), max_length=16)
+    queue = models.CharField(_('queue'), max_length=16, choices=QUEUES)
     job_id = models.CharField(
         _('job id'), max_length=128, editable=False, blank=True, null=True)
     scheduled_time = models.DateTimeField(_('scheduled time'))
@@ -76,6 +79,10 @@ class BaseJob(TimeStampedModel):
         if self.enabled:
             self.schedule()
         super(BaseJob, self).save(**kwargs)
+
+    def delete(self, **kwargs):
+        self.unschedule()
+        super(BaseJob, self).delete(**kwargs)
 
     def scheduler(self):
         return django_rq.get_scheduler(self.queue)
