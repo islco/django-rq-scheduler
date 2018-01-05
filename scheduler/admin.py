@@ -7,6 +7,9 @@ from django.utils.translation import ugettext_lazy as _
 from scheduler.models import CronJob, RepeatableJob, ScheduledJob
 
 
+QUEUES = [(key, key) for key in settings.RQ_QUEUES.keys()]
+
+
 class QueueMixin(object):
     actions = ['delete_model']
 
@@ -14,6 +17,11 @@ class QueueMixin(object):
         actions = super(QueueMixin, self).get_actions(request)
         del actions['delete_selected']
         return actions
+
+    def get_form(self, request, obj=None, **kwargs):
+        queue_field = self.model._meta.get_field('queue')
+        queue_field.choices = QUEUES
+        return super(QueueMixin, self).get_form(request, obj, **kwargs)
 
     def delete_model(self, request, obj):
         if hasattr(obj, 'all'):
