@@ -99,13 +99,13 @@ class TestScheduledJob(TestCase):
 
     def test_clean(self):
         job = self.JobClass()
-        job.queue = settings.RQ_QUEUES.keys()[0]
+        job.queue = list(settings.RQ_QUEUES)[0]
         job.callable = 'scheduler.tests.test_job'
         assert job.clean() is None
 
     def test_clean_invalid(self):
         job = self.JobClass()
-        job.queue = settings.RQ_QUEUES.keys()[0]
+        job.queue = list(settings.RQ_QUEUES)[0]
         job.callable = 'scheduler.tests.test_non_callable'
         with self.assertRaises(ValidationError):
             job.clean()
@@ -235,14 +235,14 @@ class TestCronJob(TestScheduledJob):
     def test_clean(self):
         job = self.JobClass()
         job.cron_string = '* * * * *'
-        job.queue = settings.RQ_QUEUES.keys()[0]
+        job.queue = list(settings.RQ_QUEUES)[0]
         job.callable = 'scheduler.tests.test_job'
         assert job.clean() is None
 
     def test_clean_cron_string_invalid(self):
         job = self.JobClass()
         job.cron_string = 'not-a-cron-string'
-        job.queue = settings.RQ_QUEUES.keys()[0]
+        job.queue = list(settings.RQ_QUEUES)[0]
         job.callable = 'scheduler.tests.test_job'
         with self.assertRaises(ValidationError):
             job.clean_cron_string()
