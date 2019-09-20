@@ -75,7 +75,7 @@ class BaseJob(TimeStampedModel):
             })
 
     def is_scheduled(self):
-        return self.job_id in self.scheduler()
+        return self.job_id and self.job_id in self.scheduler()
     is_scheduled.short_description = _('is scheduled?')
     is_scheduled.boolean = True
 
