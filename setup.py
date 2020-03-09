@@ -44,7 +44,7 @@ setup(
     zip_safe=True,
     install_requires=[
         'django>=1.9.0',
-        'django-model-utils>=2.4.0',
+        'django-model-utils>=4.0.0',
         'django-rq>=1.2.0',
         'rq-scheduler==0.8.3',
         'pytz>=2015.7',
