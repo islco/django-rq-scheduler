@@ -1,0 +1,152 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2020-04-17 16:40+0800\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: admin.py:32
+#, python-format
+msgid "Delete selected %(verbose_name_plural)s"
+msgstr ""
+
+#: admin.py:47 admin.py:73 admin.py:100
+msgid "RQ Settings"
+msgstr ""
+
+#: admin.py:50 admin.py:76 admin.py:103
+msgid "Scheduling"
+msgstr ""
+
+#: apps.py:10
+msgid "Django RQ Scheduler"
+msgstr ""
+
+#: models.py:22
+msgid "name"
+msgstr ""
+
+#: models.py:23
+msgid "callable"
+msgstr ""
+
+#: models.py:24
+msgid "enabled"
+msgstr ""
+
+#: models.py:25
+msgid "queue"
+msgstr ""
+
+#: models.py:27
+msgid "job id"
+msgstr ""
+
+#: models.py:29
+msgid "timeout"
+msgstr ""
+
+#: models.py:31
+msgid ""
+"Timeout specifies the maximum runtime, in seconds, for the job before it'll "
+"be considered 'lost'. Blank uses the default timeout."
+msgstr ""
+
+#: models.py:37
+msgid "result ttl"
+msgstr ""
+
+#: models.py:38
+msgid ""
+"The TTL value (in seconds) of the job result. -1: Result never expires, you "
+"should delete jobs manually. 0: Result gets deleted immediately. >0: Result "
+"expires after n seconds."
+msgstr ""
+
+#: models.py:65
+msgid "Invalid callable, must be importable"
+msgstr ""
+
+#: models.py:73
+msgid "Invalid queue, must be one of: {}"
+msgstr ""
+
+#: models.py:79
+msgid "is scheduled?"
+msgstr ""
+
+#: models.py:130
+msgid "scheduled time"
+msgstr ""
+
+#: models.py:142
+msgid "Scheduled Job"
+msgstr ""
+
+#: models.py:143
+msgid "Scheduled Jobs"
+msgstr ""
+
+#: models.py:150
+msgid "minutes"
+msgstr ""
+
+#: models.py:151
+msgid "hours"
+msgstr ""
+
+#: models.py:152
+msgid "days"
+msgstr ""
+
+#: models.py:153
+msgid "weeks"
+msgstr ""
+
+#: models.py:156
+msgid "interval"
+msgstr ""
+
+#: models.py:158
+msgid "interval unit"
+msgstr ""
+
+#: models.py:160 models.py:201
+msgid "repeat"
+msgstr ""
+
+#: models.py:189
+msgid "Repeatable Job"
+msgstr ""
+
+#: models.py:190
+msgid "Repeatable Jobs"
+msgstr ""
+
+#: models.py:198
+msgid "cron string"
+msgstr ""
+
+#: models.py:199
+msgid "Define the schedule in a crontab like syntax."
+msgstr ""
+
+#: models.py:231
+msgid "Cron Job"
+msgstr ""
+
+#: models.py:232
+msgid "Cron Jobs"
+msgstr ""

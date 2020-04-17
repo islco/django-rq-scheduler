@@ -1,0 +1,155 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# Lessica <i.82@me.com>, 2020.
+msgid ""
+msgstr ""
+"Project-Id-Version: django-rq-scheduler\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2020-04-17 16:29+0800\n"
+"PO-Revision-Date: 2020-04-17 16:29+0800\n"
+"Last-Translator: Lessica <i.82@me.com>\n"
+"Language-Team: Simplified Chinese <LL@li.org>\n"
+"Language: zh_Hans \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+
+#: admin.py:32
+#, python-format
+msgid "Delete selected %(verbose_name_plural)s"
+msgstr "删除选中的 %(verbose_name_plural)s"
+
+#: admin.py:47 admin.py:73 admin.py:100
+msgid "RQ Settings"
+msgstr "RQ 设置"
+
+#: admin.py:50 admin.py:76 admin.py:103
+msgid "Scheduling"
+msgstr "计划"
+
+#: apps.py:10
+msgid "Django RQ Scheduler"
+msgstr "Django RQ Scheduler"
+
+#: models.py:22
+msgid "name"
+msgstr "名称"
+
+#: models.py:23
+msgid "callable"
+msgstr "可调用过程"
+
+#: models.py:24
+msgid "enabled"
+msgstr "启用"
+
+#: models.py:25
+msgid "queue"
+msgstr "队列"
+
+#: models.py:27
+msgid "job id"
+msgstr "任务标识"
+
+#: models.py:29
+msgid "timeout"
+msgstr "超时"
+
+#: models.py:31
+msgid ""
+"Timeout specifies the maximum runtime, in seconds, for the job before it'll "
+"be considered 'lost'. Blank uses the default timeout."
+msgstr ""
+"超时指定了最大运行时间, 以秒为单位, 如果超出该限制, 任务将被认为 '丢失'. "
+"留空以使用默认值."
+
+#: models.py:37
+msgid "result ttl"
+msgstr "返回值存活时间"
+
+#: models.py:38
+msgid ""
+"The TTL value (in seconds) of the job result. -1: Result never expires, you "
+"should delete jobs manually. 0: Result gets deleted immediately. >0: Result "
+"expires after n seconds."
+msgstr ""
+"任务返回值的存活时间 (以秒计). -1: 返回值从不过期, 你应当手动删除任务. "
+"0: 返回值在任务完成时立即抛弃. >0: 返回值在 n 秒后过期."
+
+#: models.py:65
+msgid "Invalid callable, must be importable"
+msgstr "无效的可调用过程, 此过程必须可被导入"
+
+#: models.py:73
+msgid "Invalid queue, must be one of: {}"
+msgstr "无效的队列, 必须为下列值中的一项: {}"
+
+#: models.py:79
+msgid "is scheduled?"
+msgstr "是否已计划?"
+
+#: models.py:130
+msgid "scheduled time"
+msgstr "计划时间"
+
+#: models.py:142
+msgid "Scheduled Job"
+msgstr "计划任务"
+
+#: models.py:143
+msgid "Scheduled Jobs"
+msgstr "计划任务"
+
+#: models.py:150
+msgid "minutes"
+msgstr "分钟"
+
+#: models.py:151
+msgid "hours"
+msgstr "小时"
+
+#: models.py:152
+msgid "days"
+msgstr "天"
+
+#: models.py:153
+msgid "weeks"
+msgstr "周"
+
+#: models.py:156
+msgid "interval"
+msgstr "周期"
+
+#: models.py:158
+msgid "interval unit"
+msgstr "周期单位"
+
+#: models.py:160 models.py:201
+msgid "repeat"
+msgstr "重复"
+
+#: models.py:189
+msgid "Repeatable Job"
+msgstr "重复任务"
+
+#: models.py:190
+msgid "Repeatable Jobs"
+msgstr "重复任务"
+
+#: models.py:198
+msgid "cron string"
+msgstr "cron 字符串"
+
+#: models.py:199
+msgid "Define the schedule in a crontab like syntax."
+msgstr "以类似 crontab 的语法规则定义计划任务"
+
+#: models.py:231
+msgid "Cron Job"
+msgstr "Cron 任务"
+
+#: models.py:232
+msgid "Cron Jobs"
+msgstr "Cron 任务"
