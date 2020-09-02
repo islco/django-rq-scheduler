@@ -46,10 +46,11 @@ setup(
         'django-model-utils>=4.0.0',
         'django-rq>=1.2.0',
         'rq-scheduler==0.8.3',
-        'pytz>=2015.7',
+        'pytz>=2018.5',
         'croniter>=0.3.24',
     ],
     tests_require=tests_require,
+    test_suite="scheduler.tests",
     extras_require={
         'test': tests_require,
     },
