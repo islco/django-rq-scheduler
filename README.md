@@ -8,8 +8,8 @@ Currently, when you pip install Django RQ Scheduler the following packages are a
 
 * django >= 1.9
 * django-model-utils >= 2.4
-* django-rq >= 0.9.3 (Django RQ requires RQ >= 0.5.5)
-* rq-scheduler >= 0.6.0
+* django-rq >= 2.0 (Django RQ requires RQ >= 1.0 due to changes in redis >= 3.0.0)
+* rq-scheduler >= 0.9.0
 * pytz >= 2015.7
 * croniter >= 0.3.24
 
@@ -45,6 +45,10 @@ pip install django-rq-scheduler
 
 
 	```
+    If you also wish to run the underpinning **RQ Scheduler** at an interval different from its default of 
+    once every 60 seconds you can do so by setting `DJANGO_RQ_SCHEDULER_INTERVAL` to the new preferred interval. 
+    This is important if you want a job to either run multiple times a minute 
+    or to schedule a job more precisely than within a 60 second window.
 
 2. Configure Django RQ. See https://github.com/ui/django-rq#installation
 
