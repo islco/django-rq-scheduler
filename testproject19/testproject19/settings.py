@@ -134,3 +134,6 @@ RQ_QUEUES = {
         'URL': 'redis://localhost:6379/0',
     },
 }
+
+DJANGO_RQ_SCHEDULER_INTERVAL = 30
+RQ_SHOW_ADMIN_LINK = True

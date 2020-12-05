@@ -1,52 +1,140 @@
 from __future__ import unicode_literals
 
 from django.conf import settings
-from django.contrib import admin
+from django.contrib import admin, messages
+from django.contrib.contenttypes.admin import GenericStackedInline
+from django.templatetags.tz import utc
+from django.utils.timezone import now
 from django.utils.translation import ugettext_lazy as _
 
-from scheduler.models import CronJob, RepeatableJob, ScheduledJob
-
+from scheduler.models import CronJob, JobArg, JobKwarg, RepeatableJob, ScheduledJob
 
 QUEUES = [(key, key) for key in settings.RQ_QUEUES.keys()]
 
 
-class QueueMixin(object):
-    actions = ['delete_model']
+class HiddenMixin(object):
+    # pass
+    class Media:
+        js = ['admin/js/jquery.init.js', 'scheduler/js/base.js']
+
+
+class JobArgInline(HiddenMixin, GenericStackedInline):
+    model = JobArg
+    extra = 0
+    fieldsets = (
+        (None, {
+            'fields': ('arg_type', 'str_val', 'int_val', 'bool_val', 'datetime_val',),
+        }),
+    )
+
+
+class JobKwargInline(HiddenMixin, GenericStackedInline):
+    model = JobKwarg
+    extra = 0
+    fieldsets = (
+        (None, {
+            'fields': ('key', 'arg_type', 'str_val', 'int_val', 'bool_val', 'datetime_val',),
+        }),
+    )
+
+
+class JobAdmin(admin.ModelAdmin):
+    actions = ['delete_model', 'disable_selected', 'enable_selected', 'run_job_now']
+    inlines = [JobArgInline, JobKwargInline]
+    list_filter = ('enabled', )
+    list_display = ('enabled', 'name', 'job_id', 'function_string', 'is_scheduled',)
+    list_display_links = ('name',)
+    readonly_fields = ('job_id', )
+    fieldsets = (
+        (None, {
+            'fields': ('name', 'callable', 'enabled',),
+        }),
+        (_('RQ Settings'), {
+            'fields': ('queue', 'job_id',),
+        }),
+    )
 
     def get_actions(self, request):
-        actions = super(QueueMixin, self).get_actions(request)
-        del actions['delete_selected']
+        actions = super(JobAdmin, self).get_actions(request)
+        actions.pop('delete_selected', None)
         return actions
 
     def get_form(self, request, obj=None, **kwargs):
         queue_field = self.model._meta.get_field('queue')
         queue_field.choices = QUEUES
-        return super(QueueMixin, self).get_form(request, obj, **kwargs)
+        return super(JobAdmin, self).get_form(request, obj, **kwargs)
 
-    def delete_model(self, request, obj):
-        if hasattr(obj, 'all'):
-            for o in obj.all():
-                o.delete()
-        else:
+    def delete_model(self, request, queryset):
+        rows_deleted = 0
+        for obj in queryset.all().iterator():
             obj.delete()
+            rows_deleted += 1
+        if rows_deleted == 1:
+            message_bit = "1 job was"
+        else:
+            message_bit = "%s jobs were" % rows_deleted
+
+        level = messages.WARNING if not rows_deleted else messages.INFO
+        self.message_user(request, "%s successfully deleted." % message_bit, level=level)
     delete_model.short_description = _("Delete selected %(verbose_name_plural)s")
+    delete_model.allowed_permissions = ('delete',)
+
+    def disable_selected(self, request, queryset):
+        rows_updated = 0
+        for obj in queryset.filter(enabled=True).iterator():
+            obj.enabled = False
+            obj.save()
+            rows_updated += 1
+        if rows_updated == 1:
+            message_bit = "1 job was"
+        else:
+            message_bit = "%s jobs were" % rows_updated
+
+        level = messages.WARNING if not rows_updated else messages.INFO
+        self.message_user(request, "%s successfully disabled." % message_bit, level=level)
+    disable_selected.short_description = _("Disable selected %(verbose_name_plural)s")
+    disable_selected.allowed_permissions = ('change',)
+
+    def enable_selected(self, request, queryset):
+        rows_updated = 0
+        for obj in queryset.filter(enabled=False).iterator():
+            obj.enabled = True
+            obj.save()
+            rows_updated += 1
+        if rows_updated == 1:
+            message_bit = "1 job was"
+        else:
+            message_bit = "%s jobs were" % rows_updated
+        level = messages.WARNING if not rows_updated else messages.INFO
+        self.message_user(request, "%s successfully enabled." % message_bit, level=level)
+    enable_selected.short_description = _("Enable selected %(verbose_name_plural)s")
+    enable_selected.allowed_permissions = ('change',)
+
+    def run_job_now(self, request, queryset):
+        job_names = []
+        for obj in queryset:
+            kwargs = obj.parse_kwargs()
+            if obj.timeout:
+                kwargs['timeout'] = obj.timeout
+            if hasattr(obj, 'result_ttl') and obj.result_ttl is not None:
+                kwargs['job_result_ttl'] = obj.result_ttl
+            obj.scheduler().enqueue_at(
+                utc(now()),
+                obj.callable_func(),
+                *obj.parse_args(),
+                **kwargs
+            )
+            job_names.append(obj.name)
+        self.message_user(request, "The following jobs have been run: %s" % ', '.join(job_names))
+    run_job_now.short_description = "Run now"
+    run_job_now.allowed_permissions = ('change',)
 
 
 @admin.register(ScheduledJob)
-class ScheduledJobAdmin(QueueMixin, admin.ModelAdmin):
-    list_display = (
-        'name', 'job_id', 'is_scheduled', 'scheduled_time', 'enabled')
-    list_filter = ('enabled', )
-    list_editable = ('enabled', )
+class ScheduledJobAdmin(JobAdmin):
+    list_display = JobAdmin.list_display + ('scheduled_time',)
 
-    readonly_fields = ('job_id', )
-    fieldsets = (
-        (None, {
-            'fields': ('name', 'callable', 'enabled', ),
-        }),
-        (_('RQ Settings'), {
-            'fields': ('queue', 'job_id', ),
-        }),
+    fieldsets = JobAdmin.fieldsets + (
         (_('Scheduling'), {
             'fields': (
                 'scheduled_time',
@@ -58,48 +146,27 @@ class ScheduledJobAdmin(QueueMixin, admin.ModelAdmin):
 
 
 @admin.register(RepeatableJob)
-class RepeatableJobAdmin(QueueMixin, admin.ModelAdmin):
-    list_display = (
-        'name', 'job_id', 'is_scheduled', 'scheduled_time', 'interval_display',
-        'enabled')
-    list_filter = ('enabled', )
-    list_editable = ('enabled', )
+class RepeatableJobAdmin(JobAdmin):
+    list_display = JobAdmin.list_display + ('scheduled_time', 'interval_display')
 
-    readonly_fields = ('job_id', )
-    fieldsets = (
-        (None, {
-            'fields': ('name', 'callable', 'enabled', ),
-        }),
-        (_('RQ Settings'), {
-            'fields': ('queue', 'job_id', ),
-        }),
+    fieldsets = JobAdmin.fieldsets + (
         (_('Scheduling'), {
             'fields': (
                 'scheduled_time',
                 ('interval', 'interval_unit', ),
                 'repeat',
                 'timeout',
-                'result_ttl'
+                'result_ttl',
             ),
         }),
     )
 
 
 @admin.register(CronJob)
-class CronJobAdmin(QueueMixin, admin.ModelAdmin):
-    list_display = (
-        'name', 'job_id', 'is_scheduled', 'cron_string', 'enabled')
-    list_filter = ('enabled', )
-    list_editable = ('enabled', )
+class CronJobAdmin(JobAdmin):
+    list_display = JobAdmin.list_display + ('cron_string',)
 
-    readonly_fields = ('job_id', )
-    fieldsets = (
-        (None, {
-            'fields': ('name', 'callable', 'enabled', ),
-        }),
-        (_('RQ Settings'), {
-            'fields': ('queue', 'job_id', ),
-        }),
+    fieldsets = JobAdmin.fieldsets + (
         (_('Scheduling'), {
             'fields': (
                 'cron_string',

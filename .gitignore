@@ -66,3 +66,7 @@ target/
 
 # SQLite
 *.sqlite3
+
+# Pipenv
+Pipfile
+Pipfile.lock
