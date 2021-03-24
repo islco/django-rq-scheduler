@@ -13,8 +13,8 @@ def long_desc(root_path):
                 yield f.read()
 
 
-HERE = os.path.abspath(os.path.dirname(__file__))
-long_description = "\n\n".join(long_desc(HERE))
+PATH_OF_RUNNING_SCRIPT = os.path.abspath(os.path.dirname(__file__))
+long_description = "\n\n".join(long_desc(PATH_OF_RUNNING_SCRIPT))
 
 
 def get_version(root_path):
@@ -25,20 +25,19 @@ def get_version(root_path):
 
 
 tests_require = [
-    'factory_boy>=2.6.1',
-    'psycopg2>=2.6.1',
+    'factory_boy>=2.11.1',
 ]
 
 
 setup(
     name='django-rq-scheduler',
-    version=get_version(HERE),
+    version=get_version(PATH_OF_RUNNING_SCRIPT),
     description='A database backed job scheduler for Django RQ',
     long_description=long_description,
     packages=find_packages(),
     include_package_data=True,
-    author='Chad Shryock',
-    author_email='chad@isl.co',
+    author='ISL',
+    author_email='dev@isl.co',
     url='https://github.com/istrategylabs/django-rq-scheduler',
     zip_safe=True,
     install_requires=[
@@ -62,6 +61,7 @@ setup(
         'Operating System :: OS Independent',
         'Programming Language :: Python',
         'Programming Language :: Python :: 2.7',
+        'Programming Language :: Python :: 3.6',
         'Framework :: Django',
     ],
 )
