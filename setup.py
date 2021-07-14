@@ -1,9 +1,7 @@
 #!/usr/bin/env python
 
 import os
-from distutils.core import setup
-
-from setuptools import find_packages
+from setuptools import find_packages, setup
 
 
 def long_desc(root_path):
@@ -44,14 +42,14 @@ setup(
     zip_safe=True,
     install_requires=[
         'django>=1.9.0',
-        'django-model-utils>=2.4.0',
-        'django-rq>=0.9.3',
-        'rq-scheduler>=0.6.0',
+        'django-model-utils>=4.0.0',
+        'django-rq>=1.2.0',
+        'rq-scheduler==0.9.1',
         'pytz>=2018.5',
         'croniter>=0.3.24',
     ],
     tests_require=tests_require,
-    test_suite='scheduler.tests',
+    test_suite="scheduler.tests",
     extras_require={
         'test': tests_require,
     },
