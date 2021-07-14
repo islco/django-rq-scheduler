@@ -15,6 +15,11 @@ from model_utils import Choices
 from model_utils.models import TimeStampedModel
 
 
+
+RQ_SCHEDULER_INTERVAL = getattr(settings, "DJANGO_RQ_SCHEDULER_INTERVAL", 60)
+
+
+@python_2_unicode_compatible
 class BaseJob(TimeStampedModel):
 
     name = models.CharField(_('name'), max_length=128, unique=True)
@@ -88,7 +93,7 @@ class BaseJob(TimeStampedModel):
         super(BaseJob, self).delete(**kwargs)
 
     def scheduler(self):
-        return django_rq.get_scheduler(self.queue)
+        return django_rq.get_scheduler(self.queue, interval=RQ_SCHEDULER_INTERVAL)
 
     def is_schedulable(self):
         if self.job_id:
@@ -157,6 +162,20 @@ class RepeatableJob(ScheduledTimeMixin, BaseJob):
         _('interval unit'), max_length=12, choices=UNITS, default=UNITS.hours
     )
     repeat = models.PositiveIntegerField(_('repeat'), blank=True, null=True)
+
+    def clean(self):
+        super(RepeatableJob, self).clean()
+        self.clean_interval_unit()
+
+    def clean_interval_unit(self):
+        if RQ_SCHEDULER_INTERVAL > self.interval_seconds():
+            raise ValidationError({
+                'interval_unit': ValidationError(
+                    _("Job interval is set lower than {} queue's interval.".format(self.queue)), code='invalid')
+            })
+        if self.interval_seconds() % RQ_SCHEDULER_INTERVAL:
+            raise ValidationError(_("Job interval is not a multiple of rq_scheduler's interval frequency: {}s".format(
+                        RQ_SCHEDULER_INTERVAL)), code='invalid')
 
     def interval_display(self):
         return '{} {}'.format(self.interval, self.get_interval_unit_display())

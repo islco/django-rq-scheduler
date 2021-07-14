@@ -209,6 +209,39 @@ class TestRepeatableJob(TestScheduledJob):
     JobClass = RepeatableJob
     JobClassFactory = RepeatableJobFactory
 
+    def test_clean(self):
+        job = self.JobClass()
+        job.queue = list(settings.RQ_QUEUES)[0]
+        job.callable = 'scheduler.tests.test_job'
+        job.interval = 1
+        assert job.clean() is None
+
+    def test_clean_seconds(self):
+        job = self.JobClass()
+        job.queue = list(settings.RQ_QUEUES)[0]
+        job.callable = 'scheduler.tests.test_job'
+        job.interval = 60
+        job.interval_unit = 'seconds'
+        assert job.clean() is None
+
+    def test_clean_too_frequent(self):
+        job = self.JobClass()
+        job.queue = list(settings.RQ_QUEUES)[0]
+        job.callable = 'scheduler.tests.test_job'
+        job.interval = 30
+        job.interval_unit = 'seconds'
+        with self.assertRaises(ValidationError):
+            job.clean_interval_unit()
+
+    def test_clean_not_multiple(self):
+        job = self.JobClass()
+        job.queue = list(settings.RQ_QUEUES)[0]
+        job.callable = 'scheduler.tests.test_job'
+        job.interval = 121
+        job.interval_unit = 'seconds'
+        with self.assertRaises(ValidationError):
+            job.clean_interval_unit()
+
     def test_interval_seconds_weeks(self):
         job = RepeatableJob()
         job.interval = 2
