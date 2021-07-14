@@ -45,6 +45,10 @@ pip install django-rq-scheduler
 
 
 	```
+    If you also wish to run the underpinning **RQ Scheduler** at an interval different from its default of 
+    once every 60 seconds you can do so by setting `DJANGO_RQ_SCHEDULER_INTERVAL` to the new preferred interval. 
+    This is important if you want a job to either run multiple times a minute 
+    or to schedule a job more precisely than within a 60 second window.
 
 2. Configure Django RQ. See https://github.com/ui/django-rq#installation
 
