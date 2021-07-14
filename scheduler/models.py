@@ -19,7 +19,6 @@ from model_utils.models import TimeStampedModel
 RQ_SCHEDULER_INTERVAL = getattr(settings, "DJANGO_RQ_SCHEDULER_INTERVAL", 60)
 
 
-@python_2_unicode_compatible
 class BaseJob(TimeStampedModel):
 
     name = models.CharField(_('name'), max_length=128, unique=True)
